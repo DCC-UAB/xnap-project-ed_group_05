@@ -24,7 +24,7 @@ X = []
 for filename in os.listdir('face_images'):
 	X.append(img_to_array(load_img('face_images/'+filename)))
 X = np.array(X)
-
+print("hola")
 # Set up train and test data
 split = int(0.9*len(X))
 Xtrain = X[:split]
