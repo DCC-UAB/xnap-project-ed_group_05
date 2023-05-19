@@ -29,7 +29,11 @@ Y = rgb2lab(1.0/255*image)[:,:,1:]
 Y /= 128
 from skimage.transform import resize
 
+<<<<<<< HEAD
 # Redimensionar 'X' a la forma deseada
+=======
+# Redimensionar 'X' y 'Y' a la forma deseada
+>>>>>>> cce5823d43948f4e33278c05cd97e70ced29974a
 X = resize(X, (400, 400))
 Y = resize(Y, (400, 400, 2))
 X = X.reshape(1, 400, 400, 1)
