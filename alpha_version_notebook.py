@@ -27,6 +27,11 @@ image = np.array(image, dtype=float)
 X = rgb2lab(1.0/255*image)[:,:,0]
 Y = rgb2lab(1.0/255*image)[:,:,1:]
 Y /= 128
+from skimage.transform import resize
+
+# Redimensionar 'X' y 'Y' a la forma deseada
+X = resize(X, (400, 400))
+Y = resize(Y, (400, 400, 2))
 X = X.reshape(1, 400, 400, 1)
 Y = Y.reshape(1, 400, 400, 2)
 
