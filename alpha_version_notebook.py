@@ -9,9 +9,10 @@ Original file is located at
 
 from keras.layers import Conv2D, UpSampling2D, InputLayer, Conv2DTranspose
 from keras.layers import Activation, Dense, Dropout, Flatten
-from keras.layers.normalization import BatchNormalization
+from tensorflow.keras.layers import BatchNormalization
 from keras.models import Sequential
-from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
+from keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.utils import array_to_img, img_to_array, load_img
 from skimage.color import rgb2lab, lab2rgb, rgb2gray, xyz2lab
 from skimage.io import imsave
 import numpy as np
@@ -20,12 +21,17 @@ import random
 import tensorflow as tf
 
 # Get images
-image = img_to_array(load_img('woman.jpg'))
+image = img_to_array(load_img('image00015.jpg'))
 image = np.array(image, dtype=float)
 
 X = rgb2lab(1.0/255*image)[:,:,0]
 Y = rgb2lab(1.0/255*image)[:,:,1:]
 Y /= 128
+from skimage.transform import resize
+
+# Redimensionar 'X' a la forma deseada
+X = resize(X, (400, 400))
+Y = resize(Y, (400, 400, 2))
 X = X.reshape(1, 400, 400, 1)
 Y = Y.reshape(1, 400, 400, 2)
 
