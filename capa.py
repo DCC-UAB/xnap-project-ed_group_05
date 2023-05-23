@@ -43,6 +43,7 @@ model.add(Conv2D(16, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(16, (3, 3), activation='relu', padding='same', strides=2))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same', strides=2))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))  # Nueva capa convolucional
 model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(UpSampling2D((2, 2)))
@@ -58,7 +59,7 @@ model.fit(x=X,
     batch_size=1,
     epochs=1000)
 
-print(model.evaluate(X, Y, batch_size=1))
+print(model.evaluate(X, Y, batch_size=10))
 output = model.predict(X)
 output *= 128
 # Output colorizations
@@ -67,4 +68,3 @@ cur[:,:,0] = X[0][:,:,0]
 cur[:,:,1:] = output[0]
 imsave("img_result_globos.png", lab2rgb(cur))
 imsave("img_gray_version_globos.png", rgb2gray(lab2rgb(cur)))
-
