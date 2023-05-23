@@ -21,7 +21,7 @@ import random
 import tensorflow as tf
 
 # Get images
-image = img_to_array(load_img('globosniña.jpg'))
+image = img_to_array(load_img('niñosplaya.jpg'))
 image = np.array(image, dtype=float)
 
 X = rgb2lab(1.0/255*image)[:,:,0]
@@ -66,5 +66,5 @@ output *= 128
 cur = np.zeros((400, 400, 3))
 cur[:,:,0] = X[0][:,:,0]
 cur[:,:,1:] = output[0]
-imsave("img_result_globos.png", lab2rgb(cur))
-imsave("img_gray_version_globos.png", rgb2gray(lab2rgb(cur)))
+imsave("img_result_globos1.png", lab2rgb(cur))
+imsave("img_gray_version_globos1.png", rgb2gray(lab2rgb(cur)))
