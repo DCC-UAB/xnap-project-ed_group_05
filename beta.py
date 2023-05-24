@@ -16,9 +16,10 @@ from keras.callbacks import TensorBoard
 # Get images
 X = []
 for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/imag'):
-    img = load_img('/home/alumne/xnap-project-ed_group_05-1/imag/'+filename, target_size=(256, 256))
+    img = load_img('//home/alumne/xnap-project-ed_group_05-1/imag/'+filename, target_size=(256, 256))
     X.append(img_to_array(img))
 X = np.array(X, dtype=float)
+
 
 # Set up train and test data
 split = int(0.95*len(X))
@@ -52,7 +53,7 @@ datagen = ImageDataGenerator(
         horizontal_flip=True)
 
 # Generate training data
-batch_size = 10
+batch_size = 30
 def image_a_b_gen(batch_size):
     for batch in datagen.flow(Xtrain, batch_size=batch_size):
         lab_batch = rgb2lab(batch)
@@ -62,7 +63,7 @@ def image_a_b_gen(batch_size):
 
 # Train model      
 tensorboard = TensorBoard(log_dir="output/first_run")
-model.fit_generator(image_a_b_gen(batch_size), callbacks=[tensorboard], epochs=1, steps_per_epoch=10)
+model.fit_generator(image_a_b_gen(batch_size), callbacks=[tensorboard], epochs=150, steps_per_epoch=10)
 
 # Save model
 model_json = model.to_json()
@@ -78,8 +79,8 @@ Ytest = Ytest / 128
 print(model.evaluate(Xtest, Ytest, batch_size=batch_size))
 
 color_me = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/imag/'):
-    color_me.append(img_to_array(load_img('./home/alumne/xnap-project-ed_group_05-1/imag/'+filename)))
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/result/'):
+    color_me.append(img_to_array(load_img('/home/alumne/xnap-project-ed_group_05-1/result/'+filename, target_size=(256, 256))))
 color_me = np.array(color_me, dtype=float)
 color_me = rgb2lab(1.0/255*color_me)[:,:,:,0]
 color_me = color_me.reshape(color_me.shape+(1,))
