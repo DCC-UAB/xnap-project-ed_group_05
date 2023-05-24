@@ -21,7 +21,11 @@ import random
 import tensorflow as tf
 
 # Get images
+<<<<<<< HEAD
+image = img_to_array(load_img('man.jpg'))
+=======
 image = img_to_array(load_img('globosniña.jpg'))
+>>>>>>> 78f3cde86db549bc92afe8f08a5a8bfcb82d8886
 image = np.array(image, dtype=float)
 
 X = rgb2lab(1.0/255*image)[:,:,0]

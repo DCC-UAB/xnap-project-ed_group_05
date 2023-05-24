@@ -21,7 +21,7 @@ import random
 import tensorflow as tf
 
 # Get images
-image = img_to_array(load_img('niñosplaya.jpg'))
+image = img_to_array(load_img('globosniña.jpg'))
 image = np.array(image, dtype=float)
 
 X = rgb2lab(1.0/255*image)[:,:,0]
@@ -57,7 +57,7 @@ model.compile(optimizer='rmsprop',loss='mse')
 model.fit(x=X, 
     y=Y,
     batch_size=1,
-    epochs=1000)
+    epochs=1001)
 
 print(model.evaluate(X, Y, batch_size=10))
 output = model.predict(X)
