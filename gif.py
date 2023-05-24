@@ -55,7 +55,7 @@ def colorize_frame(frame):
     # Generar la imagen final en color
     colored_frame = np.zeros((400, 400, 3))
     colored_frame[:, :, 0] = X.reshape(400, 400)
-    colored_frame[:, :, 1:] = output.reshape(400, 400, 2)
+    colored_frame[:, :, 1:] = output.reshape(400, 400, 2)   ### S'HA D'ARREGLAR
     
     # Convertir la imagen de LAB a RGB
     colored_frame = lab2rgb(colored_frame)
@@ -88,18 +88,18 @@ model.add(Conv2D(16, (3, 3), activation='relu', padding='same'))
 model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
 
+
+""""
 # Compile the model
 optimizer = Adam(lr=0.001)
 model.compile(optimizer=optimizer, loss='mse')
 
-"""
 # Train the model
 model.fit(x=X,
           y=Y,
           batch_size=16,  # Ajustar el tamaño del lote según tus recursos de memoria
           epochs=100,  # Reducir las épocas si es necesario
           validation_split=0.2)  # Usar una parte de los datos como validación
-
 
 # Evaluate the model
 loss = model.evaluate(X, Y, batch_size=16)  # Ajustar el tamaño del lote según tus recursos de memoria
@@ -115,7 +115,6 @@ print("Loss:", loss)
 # cur[:, :, 1:] = output.reshape(400, 400, 2)
 # imsave("img_result.png", lab2rgb(cur))
 # imsave("img_gray_version.png", rgb2gray(lab2rgb(cur)))
-
 """
 
 # Abrir el archivo GIF
@@ -141,8 +140,8 @@ for frame in range(gif.n_frames):
     # Agregar el cuadro coloreado a la lista de cuadros
     frames.append(colored_frame)
 
-colored_frame = colorize_frame(np.array(frame_image))
 
+colored_frame = colorize_frame(np.array(frame_image))
 
 # Guardar los cuadros coloreados en un nuevo GIF
 frames[0].save('niño01.gif', save_all=True, append_images=frames[1:], duration=gif.info['duration'], loop=0)
