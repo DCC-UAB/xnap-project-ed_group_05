@@ -14,9 +14,8 @@ from skimage.color import rgb2lab, lab2rgb
 from skimage.io import imread, imsave
 import numpy as np
 from PIL import Image
-from skimage.io import imsave
 import imageio
-from PIL import Image
+
 
 # Función para aplicar el proceso de coloración a un cuadro
 def colorize_frame(frame):
@@ -85,31 +84,28 @@ for frame in range(gif.n_frames):
     frames.append(colored_frame)
 
 # Guardar los cuadros coloreados en un nuevo GIF
-"""imsave('niño01.gif', frames[0])
-for i in range(1, len(frames)):
-    imsave('niño01.gif', frames[i], append=True)"""
+imageio.mimsave('espiral2.gif', frames, duration=gif.info['duration'])
 
-imageio.mimsave('niño01.gif', frames, duration=gif.info['duration'])
-
-#frames[0].save('niño01.gif', save_all=True, append_images=frames[1:], duration=gif.info['duration'], loop=0)
+# print('espiral2.gif')
 
 
-""""
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 
-# Función para actualizar el contenido del gráfico
-def update_frame(i):
-    plt.imshow(frames[i])
-    plt.axis('off')
+"""
+# Crear función para actualizar el cuadro de animación
+def update_frame(frame):
+    ax1.imshow(frames_gray[frame], cmap='gray')
+    ax1.set_title('GIF en escala de grises')
+    ax2.imshow(frames_color[frame])
+    ax2.set_title('GIF coloreado')
 
-# Crear la figura y el eje
-fig = plt.figure()
-ax = plt.axes()
+# Crear figura y subtramas
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
 
-# Crear la animación con los cuadros del GIF
-ani = animation.FuncAnimation(fig, update_frame, output_gif_path=len(frames), interval=200)
+# Generar la animación
+animation = FuncAnimation(fig, update_frame, frames=len(frames), interval=200)
 
 # Mostrar la animación
+plt.tight_layout()
 plt.show()
+
 """
