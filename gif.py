@@ -16,6 +16,10 @@ import numpy as np
 from PIL import Image
 import imageio
 
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from matplotlib.animation import ArtistAnimation
+
 
 # Función para aplicar el proceso de coloración a un cuadro
 def colorize_frame(frame):
@@ -83,11 +87,41 @@ for frame in range(gif.n_frames):
     # Agregar el cuadro coloreado a la lista de cuadros
     frames.append(colored_frame)
 
-# Guardar los cuadros coloreados en un nuevo GIF
-imageio.mimsave('espiral2.gif', frames, duration=gif.info['duration'])
 
-# print('espiral2.gif')
 
+# Crear la figura y el eje
+fig, ax = plt.subplots()
+ax.axis('off')
+
+# Crear una lista de artistas para la animación
+artists = []
+for frame in frames:
+    artist = [ax.imshow(frame)]
+    artists.append(artist)
+
+# Crear la animación
+ani = ArtistAnimation(fig, artists, interval=gif.info['duration'], blit=True)
+
+# Mostrar la animación en una ventana emergente (NO FUNCIONA)
+plt.show()
+
+# Guardar la animación en un archivo MP4
+# ani.save('espiral.mp4', writer='ffmpeg')
+# imageio.mimsave('animacion.gif', frames, duration=gif.info['duration'])
+
+
+""""
+# Crear la animación del GIF
+fig = plt.figure()
+plt.axis('off')
+ani = ArtistAnimation(fig, frames, interval=gif.info['duration'], blit=True)
+
+# Guardar la animación en un archivo GIF
+ani.save('espiral_coloreado.gif', writer='pillow')
+
+# Mostrar la animación
+plt.show()
+"""
 
 
 """
