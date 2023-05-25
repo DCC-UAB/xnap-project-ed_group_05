@@ -21,12 +21,7 @@ import random
 import tensorflow as tf
 
 # Get images
-#<<<<<<< HEAD
-#image = img_to_array(load_img('swim.jpg'))
-#=======
-#image = img_to_array(load_img('globosniña.jpg'))
-#>>>>>>> 78f3cde86db549bc92afe8f08a5a8bfcb82d8886
-image = img_to_array(load_img('0209.png'))
+image = img_to_array(load_img('niñosplaya.jpg'))
 image = np.array(image, dtype=float)
 
 X = rgb2lab(1.0/255*image)[:,:,0]
@@ -48,6 +43,7 @@ model.add(Conv2D(16, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(16, (3, 3), activation='relu', padding='same', strides=2))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same', strides=2))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))  # Nueva capa convolucional
 model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(UpSampling2D((2, 2)))
@@ -63,13 +59,12 @@ model.fit(x=X,
     batch_size=1,
     epochs=1000)
 
-print(model.evaluate(X, Y, batch_size=1))
+print(model.evaluate(X, Y, batch_size=10))
 output = model.predict(X)
 output *= 128
 # Output colorizations
 cur = np.zeros((400, 400, 3))
 cur[:,:,0] = X[0][:,:,0]
 cur[:,:,1:] = output[0]
-imsave("img_result_flors209.png", lab2rgb(cur))
-imsave("img_gray_version_flors209.png", rgb2gray(lab2rgb(cur)))
-
+imsave("img_result_globos1.png", lab2rgb(cur))
+imsave("img_gray_version_globos1.png", rgb2gray(lab2rgb(cur)))
