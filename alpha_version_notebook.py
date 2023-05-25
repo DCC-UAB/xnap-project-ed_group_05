@@ -21,18 +21,27 @@ import random
 import tensorflow as tf
 
 # Get images
+<<<<<<< HEAD
 #<<<<<<< HEAD
 #image = img_to_array(load_img('swim.jpg'))
 #=======
 #image = img_to_array(load_img('globosniña.jpg'))
 #>>>>>>> 78f3cde86db549bc92afe8f08a5a8bfcb82d8886
 image = img_to_array(load_img('0209.png'))
+=======
+<<<<<<< HEAD
+image = img_to_array(load_img('man.jpg'))
+=======
+image = img_to_array(load_img('globosniña.jpg'))
+>>>>>>> 78f3cde86db549bc92afe8f08a5a8bfcb82d8886
+>>>>>>> 7259646f17f3f4f71ec082173efd1fa9b35a6142
 image = np.array(image, dtype=float)
 
 X = rgb2lab(1.0/255*image)[:,:,0]
 Y = rgb2lab(1.0/255*image)[:,:,1:]
 Y /= 128
 from skimage.transform import resize
+
 # Redimensionar 'X' y 'Y' a la forma deseada
 X = resize(X, (400, 400))
 Y = resize(Y, (400, 400, 2))
@@ -66,6 +75,7 @@ model.fit(x=X,
 print(model.evaluate(X, Y, batch_size=1))
 output = model.predict(X)
 output *= 128
+
 # Output colorizations
 cur = np.zeros((400, 400, 3))
 cur[:,:,0] = X[0][:,:,0]
