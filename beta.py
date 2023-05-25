@@ -13,13 +13,18 @@ import os
 import random
 import tensorflow as tf
 from keras.callbacks import TensorBoard
+
+
 # Get images
 X = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/imag'):
-    img = load_img('//home/alumne/xnap-project-ed_group_05-1/imag/'+filename, target_size=(256, 256))
+#for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/imag'):
+    #img = load_img('//home/alumne/xnap-project-ed_group_05-1/imag/'+filename, target_size=(256, 256))
+    #X.append(img_to_array(img))
+#X = np.array(X, dtype=float)
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/floretes'):
+    img = load_img('//home/alumne/xnap-project-ed_group_05-1/floretes/'+filename, target_size=(256, 256))
     X.append(img_to_array(img))
 X = np.array(X, dtype=float)
-
 
 # Set up train and test data
 split = int(0.95*len(X))
