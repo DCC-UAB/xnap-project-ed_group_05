@@ -40,6 +40,7 @@ model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
 model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+ #nova capa
 model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
@@ -87,8 +88,8 @@ Ytest = Ytest / 128
 print(model.evaluate(Xtest, Ytest, batch_size=batch_size))
 
 color_me = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/floretes_test'):
-    color_me.append(img_to_array(load_img('/home/alumne/xnap-project-ed_group_05-1/floretes_test/'+filename, target_size=(256, 256))))
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/floretes'):
+    color_me.append(img_to_array(load_img('/home/alumne/xnap-project-ed_group_05-1/floretes/'+filename, target_size=(256, 256))))
 color_me = np.array(color_me, dtype=float)
 color_me = rgb2lab(1.0/255*color_me)[:,:,:,0]
 color_me = color_me.reshape(color_me.shape+(1,))

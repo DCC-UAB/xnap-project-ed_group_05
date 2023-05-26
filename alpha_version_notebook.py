@@ -69,13 +69,7 @@ model.fit(x=X,
     epochs=1000)
 
 print(model.evaluate(X, Y, batch_size=1))
-evaluation = model.evaluate(X, Y, batch_size=1)
-# Plotear la evaluación
-plt.plot(['Loss'], [evaluation])
-plt.title('Evaluation')
-plt.ylabel('Loss')
-plt.savefig('evaluation_plot.png')  # Guardar el gráfico en un archivo de imagen
-plt.show()
+
 output = model.predict(X)
 output *= 128
 
