@@ -40,7 +40,6 @@ model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
 model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
- #nova capa
 model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
@@ -72,7 +71,7 @@ plt.plot(history.history['loss'])
 plt.title('Loss over epochs')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
-plt.savefig('loss_plot.png')  # Guardar el gráfico en un archivo de imagen
+plt.savefig('loss_plot_3.png')  # Guardar el gráfico en un archivo de imagen
 plt.show()
 # Save model
 model_json = model.to_json()

@@ -51,15 +51,15 @@ history = model.fit(x=X,
                     batch_size=1,
                     epochs=1001)
 
-print(model.evaluate(X, Y, batch_size=1))
+print(model.evaluate(X, Y, batch_size=10))
 output = model.predict(X)
 output *= 128
 # Output colorizations
 cur = np.zeros((400, 400, 3))
 cur[:,:,0] = X[0][:,:,0]
 cur[:,:,1:] = output[0]
-imsave("img_result_globos1.png", lab2rgb(cur))
-imsave("img_gray_version_globos1.png", rgb2gray(lab2rgb(cur)))
+imsave("img_result_nueva_1.png", lab2rgb(cur))
+imsave("img_gray_version_nueva_1.png", rgb2gray(lab2rgb(cur)))
 
 # Plot loss
 loss = history.history['loss']
@@ -70,5 +70,5 @@ plt.title('Training Loss')
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
 plt.legend()
-plt.savefig('loss_plot_capa.png') 
+plt.savefig('loss_plot_capa_2_1.png') 
 plt.show()
