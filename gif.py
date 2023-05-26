@@ -55,7 +55,8 @@ model.add(Conv2D(16, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(16, (3, 3), activation='relu', padding='same', strides=2))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same', strides=2))
-model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))  # Nueva capa convolucional
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same')) 
+
 model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(UpSampling2D((2, 2)))
@@ -102,8 +103,25 @@ for frame in frames:
 # Crear la animación
 ani = ArtistAnimation(fig, artists, interval=gif.info['duration'], blit=True)
 
-# Mostrar la animación en una ventana emergente (NO FUNCIONA)
+
+# Guardar los cuadros generados 
+imageio.mimsave('animacion.gif', frames)
+
+# Abrir y mostrar el GIF guardado
+saved_gif = Image.open('animacion.gif')
+# saved_gif.show()
+
+# Abrir y mostrar el GIF guardado utilizando plt.imshow()
+plt.imshow(saved_gif)
+plt.axis('off')
 plt.show()
+
+
+
+# Mostrar la animación en una ventana emergente (NO FUNCIONA)
+# plt.show()
+
+
 
 # Guardar la animación en un archivo MP4
 # ani.save('espiral.mp4', writer='ffmpeg')
