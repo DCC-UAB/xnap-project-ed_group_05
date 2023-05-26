@@ -19,22 +19,18 @@ import numpy as np
 import os
 import random
 import tensorflow as tf
-
+import matplotlib.pyplot as plt
 # Get images
-<<<<<<< HEAD
+#<<<<<<< HEAD
 #<<<<<<< HEAD
 #image = img_to_array(load_img('swim.jpg'))
 #=======
 #image = img_to_array(load_img('globosniña.jpg'))
 #>>>>>>> 78f3cde86db549bc92afe8f08a5a8bfcb82d8886
-image = img_to_array(load_img('0209.png'))
-=======
-<<<<<<< HEAD
-image = img_to_array(load_img('man.jpg'))
-=======
+#image = img_to_array(load_img('0209.png'))
+#=======
 image = img_to_array(load_img('globosniña.jpg'))
->>>>>>> 78f3cde86db549bc92afe8f08a5a8bfcb82d8886
->>>>>>> 7259646f17f3f4f71ec082173efd1fa9b35a6142
+#>>>>>>> 7259646f17f3f4f71ec082173efd1fa9b35a6142
 image = np.array(image, dtype=float)
 
 X = rgb2lab(1.0/255*image)[:,:,0]
@@ -73,6 +69,13 @@ model.fit(x=X,
     epochs=1000)
 
 print(model.evaluate(X, Y, batch_size=1))
+evaluation = model.evaluate(X, Y, batch_size=1)
+# Plotear la evaluación
+plt.plot(['Loss'], [evaluation])
+plt.title('Evaluation')
+plt.ylabel('Loss')
+plt.savefig('evaluation_plot.png')  # Guardar el gráfico en un archivo de imagen
+plt.show()
 output = model.predict(X)
 output *= 128
 
