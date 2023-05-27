@@ -1,5 +1,5 @@
 
-
+from keras.optimizers import RMSprop
 from keras.layers import Conv2D, UpSampling2D, InputLayer, Conv2DTranspose
 from keras.layers import Activation, Dense, Dropout, Flatten
 from tensorflow.keras.layers import BatchNormalization
@@ -44,7 +44,9 @@ model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
 model.add(UpSampling2D((2, 2)))
-model.compile(optimizer='rmsprop', loss='mse')
+optimizer = RMSprop(learning_rate=0.0001)  # Ajusta el valor de learning_rate según tus necesidades
+model.compile(optimizer=optimizer, loss='mse')
+#model.compile(optimizer='rmsprop', loss='mse')
 
 # Image transformer
 datagen = ImageDataGenerator(
@@ -54,7 +56,7 @@ datagen = ImageDataGenerator(
         horizontal_flip=True)
 
 # Generate training data
-batch_size = 10
+batch_size = 1
 def image_a_b_gen(batch_size):
     for batch in datagen.flow(Xtrain, batch_size=batch_size):
         lab_batch = rgb2lab(batch)
@@ -64,14 +66,14 @@ def image_a_b_gen(batch_size):
 
 # Train model      
 tensorboard = TensorBoard(log_dir="output/first_run")
-history = model.fit_generator(image_a_b_gen(batch_size), callbacks=[tensorboard], epochs=50, steps_per_epoch=10)
+history = model.fit_generator(image_a_b_gen(batch_size), callbacks=[tensorboard], epochs=1050, steps_per_epoch=10)
 
 # Plot loss history
 plt.plot(history.history['loss'])
 plt.title('Loss over epochs')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
-plt.savefig('loss_plot_3.png')  # Guardar el gráfico en un archivo de imagen
+plt.savefig('loss_plot_beta_epocas.png')  # Guardar el gráfico en un archivo de imagen
 plt.show()
 # Save model
 model_json = model.to_json()
@@ -87,8 +89,8 @@ Ytest = Ytest / 128
 print(model.evaluate(Xtest, Ytest, batch_size=batch_size))
 
 color_me = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/floretes'):
-    color_me.append(img_to_array(load_img('/home/alumne/xnap-project-ed_group_05-1/floretes/'+filename, target_size=(256, 256))))
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/floretes_test'):
+    color_me.append(img_to_array(load_img('/home/alumne/xnap-project-ed_group_05-1/floretes_test/'+filename, target_size=(256, 256))))
 color_me = np.array(color_me, dtype=float)
 color_me = rgb2lab(1.0/255*color_me)[:,:,:,0]
 color_me = color_me.reshape(color_me.shape+(1,))
@@ -102,5 +104,5 @@ for i in range(len(output)):
     cur = np.zeros((256, 256, 3))
     cur[:,:,0] = color_me[i][:,:,0]
     cur[:,:,1:] = output[i]
-    imsave("/home/alumne/xnap-project-ed_group_05-1/result/img_"+str(i)+".png", lab2rgb(cur))
+    imsave("/home/alumne/xnap-project-ed_group_05-1/result_beta_epocas/img_"+str(i)+".png", lab2rgb(cur))
 
