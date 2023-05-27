@@ -14,6 +14,7 @@ import random
 import tensorflow as tf
 from keras.callbacks import TensorBoard
 import matplotlib.pyplot as plt
+from skimage import img_as_ubyte
 # Get images
 X = []
 for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/floretes/'):
@@ -73,7 +74,7 @@ plt.plot(history.history['loss'])
 plt.title('Loss over epochs')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
-plt.savefig('loss_plot_beta_epocas.png')  # Guardar el gráfico en un archivo de imagen
+plt.savefig('loss_plot_beta_epocas_new.png')  # Guardar el gráfico en un archivo de imagen
 plt.show()
 # Save model
 model_json = model.to_json()
@@ -104,5 +105,5 @@ for i in range(len(output)):
     cur = np.zeros((256, 256, 3))
     cur[:,:,0] = color_me[i][:,:,0]
     cur[:,:,1:] = output[i]
-    imsave("/home/alumne/xnap-project-ed_group_05-1/result_beta_epocas/img_"+str(i)+".png", lab2rgb(cur))
+    imsave("/home/alumne/xnap-project-ed_group_05-1/result_full/img_"+str(i)+".png", lab2rgb(cur))
 
