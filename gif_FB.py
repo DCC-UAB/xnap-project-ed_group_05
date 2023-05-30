@@ -7,6 +7,10 @@ Original file is located at
     https://colab.research.google.com/drive/169QqsfCcGUdHqy_AwOerpRm2zXCTCeWB
 """
 
+
+#  EL CODI FUNCIONA BÉ AMB ELS GIFS
+
+
 from keras.layers import Conv2D, UpSampling2D, InputLayer
 from keras.models import Sequential
 from skimage.transform import resize
@@ -42,6 +46,7 @@ def colorize_frame(frame):
 
     # Convertir la imagen de LAB a RGB
     colored_frame = lab2rgb(colored_frame)
+    colored_frame = (colored_frame * 255).astype(np.uint8)
 
     return colored_frame
 
@@ -49,14 +54,18 @@ def colorize_frame(frame):
 # Building the neural network
 model = Sequential()
 model.add(InputLayer(input_shape=(None, None, 1)))
-model.add(Conv2D(8, (3, 3), activation='relu', padding='same', strides=2))
+
 model.add(Conv2D(8, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(8, (3, 3), activation='relu', padding='same', strides=2))
 model.add(Conv2D(16, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(16, (3, 3), activation='relu', padding='same', strides=2))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same', strides=2))
 model.add(Conv2D(64, (3, 3), activation='relu', padding='same')) 
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same', strides=2))
 
+model.add(UpSampling2D((2, 2)))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
 model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(UpSampling2D((2, 2)))
@@ -105,10 +114,10 @@ ani = ArtistAnimation(fig, artists, interval=gif.info['duration'], blit=True)
 
 
 # Guardar los cuadros generados 
-imageio.mimsave('animacion.gif', frames)
+imageio.mimsave('espiral_02.gif', frames)
 
 # Abrir y mostrar el GIF guardado
-saved_gif = Image.open('animacion.gif')
+saved_gif = Image.open('espiral_02.gif')
 # saved_gif.show()
 
 # Abrir y mostrar el GIF guardado utilizando plt.imshow()

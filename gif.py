@@ -7,6 +7,10 @@ Original file is located at
     https://colab.research.google.com/drive/169QqsfCcGUdHqy_AwOerpRm2zXCTCeWB
 """
 
+
+#  MODIFICACIÓ / MILLORES CODI GIFS
+
+
 from tensorflow.keras.layers import Conv2D, UpSampling2D, Input
 from tensorflow.keras.models import Model
 from skimage.transform import resize
