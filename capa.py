@@ -11,9 +11,9 @@ import os
 import random
 import tensorflow as tf
 import matplotlib.pyplot as plt
-
+from keras.optimizers import RMSprop
 # Get images
-image = img_to_array(load_img('globosniña.jpg'))
+image = img_to_array(load_img('niñosplaya.jpg'))
 image = np.array(image, dtype=float)
 
 X = rgb2lab(1.0/255*image)[:,:,0]
@@ -42,24 +42,26 @@ model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(16, (3, 3), activation='relu', padding='same'))
 model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
-
+optimizer = RMSprop(learning_rate=0.0001)
+# Compile the model with the optimizer
+#model.compile(optimizer=optimizer, loss='mse')
 # Finish model
 model.compile(optimizer='rmsprop',loss='mse')
 
 history = model.fit(x=X, 
                     y=Y,
                     batch_size=1,
-                    epochs=2000)
+                    epochs=1000)
 
-print(model.evaluate(X, Y, batch_size=1))
+print(model.evaluate(X, Y, batch_size=13))
 output = model.predict(X)
 output *= 128
 # Output colorizations
 cur = np.zeros((400, 400, 3))
 cur[:,:,0] = X[0][:,:,0]
 cur[:,:,1:] = output[0]
-imsave("img_result_capa_nueva.png", lab2rgb(cur))
-imsave("img_gray_capa_nueva.png", rgb2gray(lab2rgb(cur)))
+imsave("img_result_capa_lr.png", lab2rgb(cur))
+imsave("img_gray_capa_lr.png", rgb2gray(lab2rgb(cur)))
 
 # Plot loss
 loss = history.history['loss']
@@ -70,5 +72,5 @@ plt.title('Training Loss')
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
 plt.legend()
-plt.savefig('loss_plot_capa_nueva.png') 
+plt.savefig('loss_plot_capa_lr.png') 
 plt.show()
