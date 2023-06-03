@@ -65,17 +65,39 @@ def image_a_b_gen(batch_size):
         Y_batch = lab_batch[:,:,:,1:] / 128
         yield (X_batch.reshape(X_batch.shape+(1,)), Y_batch)
 
-# Train model      
+# Train model    
+# Test images
+Xtest = rgb2lab(1.0/255*X[split:])[:,:,:,0]
+Xtest = Xtest.reshape(Xtest.shape+(1,))
+Ytest = rgb2lab(1.0/255*X[split:])[:,:,:,1:]
+Ytest = Ytest / 128
+#print(model.evaluate(Xtest, Ytest, batch_size=batch_size))  
 tensorboard = TensorBoard(log_dir="output/first_run")
-history = model.fit_generator(image_a_b_gen(batch_size), callbacks=[tensorboard], epochs=350, steps_per_epoch=40)
-
+history = model.fit_generator(
+    image_a_b_gen(batch_size),
+    callbacks=[tensorboard],
+    epochs=350,
+    steps_per_epoch=40,
+    validation_data=(Xtest, Ytest)  # Agrega los datos de validación
+)
+model.save_weights("model_weights.h5")
+print(model.evaluate(Xtest, Ytest, batch_size=batch_size))  
 # Plot loss history
-plt.plot(history.history['loss'])
+plt.plot(history.history['loss'], label='Training Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
 plt.title('Loss over epochs')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
+plt.legend()
 plt.savefig('loss_plot_beta_epocas_new.png')  # Guardar el gráfico en un archivo de imagen
 plt.show()
+# Plot loss history
+#plt.plot(history.history['loss'])
+#plt.title('Loss over epochs')
+#plt.xlabel('Epoch')
+#plt.ylabel('Loss')
+#plt.savefig('loss_plot_beta_epocas_new.png')  # Guardar el gráfico en un archivo de imagen
+#plt.show()
 # Save model
 model_json = model.to_json()
 with open("model.json", "w") as json_file:
@@ -83,11 +105,11 @@ with open("model.json", "w") as json_file:
 model.save_weights("model.h5")
 
 # Test images
-Xtest = rgb2lab(1.0/255*X[split:])[:,:,:,0]
-Xtest = Xtest.reshape(Xtest.shape+(1,))
-Ytest = rgb2lab(1.0/255*X[split:])[:,:,:,1:]
-Ytest = Ytest / 128
-print(model.evaluate(Xtest, Ytest, batch_size=batch_size))
+#Xtest = rgb2lab(1.0/255*X[split:])[:,:,:,0]
+#Xtest = Xtest.reshape(Xtest.shape+(1,))
+#Ytest = rgb2lab(1.0/255*X[split:])[:,:,:,1:]
+#Ytest = Ytest / 128
+#print(model.evaluate(Xtest, Ytest, batch_size=batch_size))
 
 color_me = []
 for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/new_data_colors/test'):
