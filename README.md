@@ -36,7 +36,7 @@ Biblioteques de Python:
   - PIL
   - Imageio
 
-## Contribuïdors
+## Contribuïdores
 Àfrica Gamero López (1606033@uab.cat), Èlia Vinyes Devesa (1606019@uab.cat), Marina Sulé Carrasco (1527602@uab.cat)
 
 Xarxes Neuronals i Aprenentatge Profund
