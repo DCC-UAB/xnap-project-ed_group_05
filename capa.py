@@ -1,32 +1,26 @@
-from keras.layers import Conv2D, UpSampling2D, InputLayer, Conv2DTranspose
-from keras.layers import Activation, Dense, Dropout, Flatten
+from keras.layers import Conv2D, UpSampling2D, InputLayer
 from tensorflow.keras.layers import BatchNormalization
 from keras.models import Sequential
-from keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.utils import array_to_img, img_to_array, load_img
-from skimage.color import rgb2lab, lab2rgb, rgb2gray, xyz2lab
+from tensorflow.keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
+from skimage.color import rgb2lab, lab2rgb, rgb2gray
 from skimage.io import imsave
 import numpy as np
-import os
-import random
-import tensorflow as tf
+from skimage.transform import resize
 import matplotlib.pyplot as plt
 from keras.optimizers import RMSprop
-# Get images
-image = img_to_array(load_img('niñosplaya.jpg'))
+# Load and preprocess the image
+image = img_to_array(load_img('globosniña.jpg'))
 image = np.array(image, dtype=float)
-
 X = rgb2lab(1.0/255*image)[:,:,0]
-Y = rgb2lab(1.0/255*image)[:,:,1:]
-Y /= 128
-from skimage.transform import resize
-# Redimensionar 'X' y 'Y' a la forma deseada
+Y = rgb2lab(1.0/255*image)[:,:,1:] / 128
+
+# Resize the images
 X = resize(X, (400, 400))
 Y = resize(Y, (400, 400, 2))
 X = X.reshape(1, 400, 400, 1)
 Y = Y.reshape(1, 400, 400, 2)
 
-# Building the neural network
+# Build the neural network
 model = Sequential()
 model.add(InputLayer(input_shape=(None, None, 1)))
 model.add(Conv2D(8, (3, 3), activation='relu', padding='same', strides=2))
@@ -35,33 +29,33 @@ model.add(Conv2D(16, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(16, (3, 3), activation='relu', padding='same', strides=2))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same', strides=2))
-#model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))  # Nueva capa convolucional
 model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(16, (3, 3), activation='relu', padding='same'))
 model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
+
+# Compile the model
 optimizer = RMSprop(learning_rate=0.0001)
-# Compile the model with the optimizer
-#model.compile(optimizer=optimizer, loss='mse')
-# Finish model
-model.compile(optimizer='rmsprop',loss='mse')
+model.compile(optimizer=optimizer, loss='mse')
 
-history = model.fit(x=X, 
-                    y=Y,
-                    batch_size=1,
-                    epochs=1000)
+# Train the model
+history = model.fit(x=X, y=Y, batch_size=1, epochs=1000)
 
-print(model.evaluate(X, Y, batch_size=13))
+# Evaluate the model
+print(model.evaluate(X, Y, batch_size=1))
+
+# Generate output
 output = model.predict(X)
 output *= 128
+
 # Output colorizations
 cur = np.zeros((400, 400, 3))
 cur[:,:,0] = X[0][:,:,0]
 cur[:,:,1:] = output[0]
-imsave("img_result_capa_lr.png", lab2rgb(cur))
-imsave("img_gray_capa_lr.png", rgb2gray(lab2rgb(cur)))
+imsave("img_result_flors209_2.png", lab2rgb(cur))
+imsave("img_gray_version_flors209_2.png", rgb2gray(lab2rgb(cur)))
 
 # Plot loss
 loss = history.history['loss']
@@ -72,5 +66,6 @@ plt.title('Training Loss')
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
 plt.legend()
-plt.savefig('loss_plot_capa_lr.png') 
+plt.savefig('loss_plot.png')
 plt.show()
+

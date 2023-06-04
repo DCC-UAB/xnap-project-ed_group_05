@@ -20,17 +20,8 @@ import os
 import random
 import tensorflow as tf
 import matplotlib.pyplot as plt
-# Get images
-#<<<<<<< HEAD
-#<<<<<<< HEAD
-#image = img_to_array(load_img('swim.jpg'))
-#=======
-#image = img_to_array(load_img('globosniña.jpg'))
-#>>>>>>> 78f3cde86db549bc92afe8f08a5a8bfcb82d8886
-#image = img_to_array(load_img('0209.png'))
-#=======
+
 image = img_to_array(load_img('globosniña.jpg'))
-#>>>>>>> 7259646f17f3f4f71ec082173efd1fa9b35a6142
 image = np.array(image, dtype=float)
 
 X = rgb2lab(1.0/255*image)[:,:,0]
@@ -77,6 +68,6 @@ output *= 128
 cur = np.zeros((400, 400, 3))
 cur[:,:,0] = X[0][:,:,0]
 cur[:,:,1:] = output[0]
-imsave("img_result_flors209.png", lab2rgb(cur))
-imsave("img_gray_version_flors209.png", rgb2gray(lab2rgb(cur)))
+imsave("img_result_flors209_2.png", lab2rgb(cur))
+imsave("img_gray_version_flors209_2.png", rgb2gray(lab2rgb(cur)))
 

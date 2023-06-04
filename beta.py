@@ -17,8 +17,8 @@ import matplotlib.pyplot as plt
 from skimage import img_as_ubyte
 # Get images
 X = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/new_data_colors/train'):
-    img = load_img('/home/alumne/xnap-project-ed_group_05-1/new_data_colors/train/'+filename, target_size=(256, 256))
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/floretes'):
+    img = load_img('/home/alumne/xnap-project-ed_group_05-1/floretes/'+filename, target_size=(256, 256))
     X.append(img_to_array(img))
 X = np.array(X, dtype=float)
 
@@ -89,7 +89,7 @@ plt.title('Loss over epochs')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.legend()
-plt.savefig('loss_plot_beta_epocas_new.png')  # Guardar el gráfico en un archivo de imagen
+plt.savefig('loss_plot_beta_flores_val.png')  # Guardar el gráfico en un archivo de imagen
 plt.show()
 # Plot loss history
 #plt.plot(history.history['loss'])
@@ -112,8 +112,8 @@ model.save_weights("model.h5")
 #print(model.evaluate(Xtest, Ytest, batch_size=batch_size))
 
 color_me = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/new_data_colors/test'):
-    color_me.append(img_to_array(load_img('/home/alumne/xnap-project-ed_group_05-1/new_data_colors/test/'+filename, target_size=(256, 256))))
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/floretes_test'):
+    color_me.append(img_to_array(load_img('/home/alumne/xnap-project-ed_group_05-1/floretes_test/'+filename, target_size=(256, 256))))
 color_me = np.array(color_me, dtype=float)
 color_me = rgb2lab(1.0/255*color_me)[:,:,:,0]
 color_me = color_me.reshape(color_me.shape+(1,))
@@ -127,5 +127,5 @@ for i in range(len(output)):
     cur = np.zeros((256, 256, 3))
     cur[:,:,0] = color_me[i][:,:,0]
     cur[:,:,1:] = output[i]
-    imsave("/home/alumne/xnap-project-ed_group_05-1/beta_new/img_"+str(i)+".png", lab2rgb(cur))
+    imsave("/home/alumne/xnap-project-ed_group_05-1/result_beta_val_flors/img_"+str(i)+".png", lab2rgb(cur))
 
