@@ -35,7 +35,8 @@ Biblioteques de Python:
   - Os
   - PIL
   - Imageio
-
+## Referències
+[Coloring black and white images with neural networks](https://github.com/emilwallner/Coloring-greyscale-images)
 ## Contribuïdores
 Àfrica Gamero López (1606033@uab.cat), Èlia Vinyes Devesa (1606019@uab.cat), Marina Sulé Carrasco (1527602@uab.cat)
 
