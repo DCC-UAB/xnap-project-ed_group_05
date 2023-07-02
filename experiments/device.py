@@ -81,7 +81,7 @@ with device:
     history = model.fit_generator(
         image_a_b_gen(batch_size),
         callbacks=[tensorboard],
-        epochs=350,
+        epochs=50,
         steps_per_epoch=40,
         validation_data=(Xtest, Ytest)
     )
