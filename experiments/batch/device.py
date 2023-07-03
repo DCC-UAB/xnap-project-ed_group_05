@@ -1,11 +1,11 @@
 import tensorflow as tf
-from tensorflow.keras.optimizers import RMSprop
-from tensorflow.keras.layers import Conv2D, UpSampling2D, InputLayer
-from tensorflow.keras.layers import Activation, Dense, Dropout, Flatten
-from tensorflow.keras.layers import BatchNormalization
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.utils import array_to_img, img_to_array, load_img
+from keras.optimizers import RMSprop
+from keras.layers import Conv2D, UpSampling2D, InputLayer
+from keras.layers import Activation, Dense, Dropout, Flatten
+from keras.layers import BatchNormalization
+from keras.models import Sequential
+from keras.preprocessing.image import ImageDataGenerator
+from keras.utils import array_to_img, img_to_array, load_img
 from skimage.color import rgb2lab, lab2rgb
 from skimage.io import imsave
 import numpy as np
@@ -18,8 +18,8 @@ device = tf.device("GPU")
 
 # Get images
 X = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/beta/flors/flors_train'):
-    img = load_img('/home/alumne/xnap-project-ed_group_05-1/beta/flors/flors_train/'+filename, target_size=(256, 256))
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_train'):
+    img = load_img('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_train/'+filename, target_size=(256, 256))
     X.append(img_to_array(img))
 X = np.array(X, dtype=float)
 
@@ -95,7 +95,7 @@ plt.title('Loss over epochs')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.legend()
-plt.savefig('/home/alumne/xnap-project-ed_group_05-1/experiments/batch/loss_plot_batch_flors.png')
+plt.savefig('/home/alumne/xnap-project-ed_group_05/experiments/batch/loss_plot_batch_flors.png')
 plt.show()
 
 # Save model
@@ -106,7 +106,7 @@ model.save_weights("model.h5")
 
 # Colorization
 color_me = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-1/beta/flors/flors_test'):
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_test'):
     color_me.append(img_to_array(load_img('/home/alumne/xnap-project-ed_group_05-1/beta/flors/flors_test/'+filename, target_size=(256, 256))))
 color_me = np.array(color_me, dtype=float)
 color_me = rgb2lab(1.0/255*color_me)[:,:,:,0]
@@ -121,4 +121,4 @@ for i in range(len(output)):
     cur = np.zeros((256, 256, 3))
     cur[:,:,0] = color_me[i][:,:,0]
     cur[:,:,1:] = output[i]
-    imsave("/home/alumne/xnap-project-ed_group_05-1/experiments/batch/batch_result_2/img_"+str(i)+".png", lab2rgb(cur))
+    imsave("/home/alumne/xnap-project-ed_group_05/experiments/batch/batch_result_2/img_"+str(i)+".png", lab2rgb(cur))
