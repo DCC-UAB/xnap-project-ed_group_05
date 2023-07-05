@@ -1,11 +1,11 @@
 import tensorflow as tf
-from tensorflow.keras.optimizers import RMSprop
-from tensorflow.keras.layers import Conv2D, UpSampling2D, InputLayer
-from tensorflow.keras.layers import Activation, Dense, Dropout, Flatten
-from tensorflow.keras.layers import BatchNormalization
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.utils import array_to_img, img_to_array, load_img
+from keras.optimizers import RMSprop
+from keras.layers import Conv2D, UpSampling2D, InputLayer
+from keras.layers import Activation, Dense, Dropout, Flatten
+from keras.layers import BatchNormalization
+from keras.models import Sequential
+from keras.preprocessing.image import ImageDataGenerator
+from keras.utils import array_to_img, img_to_array, load_img
 from skimage.color import rgb2lab, lab2rgb
 from skimage.io import imsave
 import numpy as np
