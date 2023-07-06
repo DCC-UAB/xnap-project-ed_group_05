@@ -1,0 +1,75 @@
+{
+    "os": "Linux-5.15.0-1041-azure-x86_64-with-glibc2.31",
+    "python": "3.10.9",
+    "heartbeatAt": "2023-07-06T07:58:33.658362",
+    "startedAt": "2023-07-06T07:58:33.124814",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/home/alumne/xnap-project-ed_group_05/experiments/wandb/prueba_wb.py",
+    "codePath": "experiments/wandb/prueba_wb.py",
+    "git": {
+        "remote": "https://github.com/DCC-UAB/xnap-project-ed_group_05",
+        "commit": "337289127661b6180098768c695d43e0243846be"
+    },
+    "email": null,
+    "root": "/home/alumne/xnap-project-ed_group_05",
+    "host": "ML-RefVm-676786",
+    "username": "alumne",
+    "executable": "/home/alumne/anaconda3/bin/python",
+    "cpu_count": 6,
+    "cpu_count_logical": 6,
+    "cpu_freq": {
+        "current": 2596.9870000000005,
+        "min": 0.0,
+        "max": 0.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2596.987,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2596.987,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2596.987,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2596.987,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2596.987,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2596.987,
+            "min": 0.0,
+            "max": 0.0
+        }
+    ],
+    "disk": {
+        "total": 145.1909637451172,
+        "used": 109.34265899658203
+    },
+    "gpu": "Tesla M60",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "Tesla M60",
+            "memory_total": 8589934592
+        }
+    ],
+    "memory": {
+        "total": 54.889015197753906
+    }
+}

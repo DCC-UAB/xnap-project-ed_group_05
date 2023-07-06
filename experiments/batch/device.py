@@ -22,8 +22,8 @@ device = tf.device("GPU")
 
 # Get images
 X = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_train'):
-    img = load_img('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_train/'+filename, target_size=(256, 256))
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/sport/total/train'):
+    img = load_img('/home/alumne/xnap-project-ed_group_05/beta/sport/total/train/'+filename, target_size=(256, 256))
     X.append(img_to_array(img))
 X = np.array(X, dtype=float)
 
@@ -35,20 +35,20 @@ Xtrain = tf.convert_to_tensor(Xtrain, dtype=tf.float32)
 
 model = Sequential()
 model.add(InputLayer(input_shape=(256, 256, 1)))
-model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
-model.add(Conv2D(64, (3, 3), activation='relu', padding='same', strides=2))
-model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
-model.add(Conv2D(128, (3, 3), activation='relu', padding='same', strides=2))
-model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
-model.add(Conv2D(256, (3, 3), activation='relu', padding='same', strides=2))
-model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
-model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
-model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same', strides=2, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(128, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(128, (3, 3), activation='relu', padding='same', strides=2, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(256, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(256, (3, 3), activation='relu', padding='same', strides=2, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(512, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(256, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(128, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
 model.add(UpSampling2D((2, 2)))
-model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
 model.add(UpSampling2D((2, 2)))
-model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
-model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
+model.add(Conv2D(32, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(2, (3, 3), activation='tanh', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
 model.add(UpSampling2D((2, 2)))
 
 optimizer = RMSprop(learning_rate=0.001)
@@ -85,7 +85,7 @@ with device:
     history = model.fit_generator(
         image_a_b_gen(batch_size),
         callbacks=[tensorboard],
-        epochs=150,
+        epochs=250,
         steps_per_epoch=33,
         validation_data=(Xtest, Ytest)
     )
@@ -110,8 +110,8 @@ model.save_weights("model.h5")
 
 # Colorization
 color_me = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_test'):
-    color_me.append(img_to_array(load_img('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_test/'+filename, target_size=(256, 256))))
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/sport/total/test'):
+    color_me.append(img_to_array(load_img('/home/alumne/xnap-project-ed_group_05/beta/sport/total/test/'+filename, target_size=(256, 256))))
 color_me = np.array(color_me, dtype=float)
 color_me = rgb2lab(1.0/255*color_me)[:,:,:,0]
 color_me = color_me.reshape(color_me.shape+(1,))
@@ -125,4 +125,4 @@ for i in range(len(output)):
     cur = np.zeros((256, 256, 3))
     cur[:,:,0] = color_me[i][:,:,0]
     cur[:,:,1:] = output[i]
-    imsave("/home/alumne/xnap-project-ed_group_05/experiments/batch/correccio_steps/img_"+str(i)+".png", lab2rgb(cur))
+    imsave("/home/alumne/xnap-project-ed_group_05/experiments/batch/l2_mas_steps/img_"+str(i)+".png", lab2rgb(cur))
