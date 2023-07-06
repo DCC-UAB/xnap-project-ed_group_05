@@ -35,10 +35,16 @@ wandb.init(
     dir="/home/alumne/xnap-project-ed_group_05/experiments/wandb",
     # track hyperparameters and run metadata
     config={
-    "learning_rate": 0.001,
+    "learning_rate": 0.01,
     "architecture": "CNN",
-    "dataset": "CIFAR-100",
+    "dataset": "sports",
     "epochs": 250,
+    "regularizador": "no",
+    "batch_size": 10, 
+    "steps": 37,
+    "optimizador": "RMSprop",
+    "loss": "GAN"
+
     }
 )
 
@@ -50,6 +56,7 @@ Xtrain = X[:split]
 Xtrain = 1.0/255*Xtrain
 Xtrain = tf.convert_to_tensor(Xtrain, dtype=tf.float32)
 #l2
+'''''
 model = Sequential()
 model.add(InputLayer(input_shape=(256, 256, 1)))
 model.add(Conv2D(64, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
@@ -67,8 +74,27 @@ model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
 model.add(Conv2D(2, (3, 3), activation='tanh', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
 model.add(UpSampling2D((2, 2)))
+'''
 
-optimizer = RMSprop(learning_rate = 0.001)
+model = Sequential()
+model.add(InputLayer(input_shape=(256, 256, 1)))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same', strides=2))
+model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(128, (3, 3), activation='relu', padding='same', strides=2))
+model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(256, (3, 3), activation='relu', padding='same', strides=2))
+model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
+model.add(UpSampling2D((2, 2)))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+model.add(UpSampling2D((2, 2)))
+model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
+model.add(UpSampling2D((2, 2)))
+
+optimizer = RMSprop(learning_rate = 0.01)
 model.compile(optimizer=optimizer, loss='binary_crossentropy')
 
 
@@ -80,7 +106,7 @@ datagen = ImageDataGenerator(
         horizontal_flip=True)
 
 # Generate training data
-batch_size = 5
+batch_size = 10
 def image_a_b_gen(batch_size):
     for batch in datagen.flow(Xtrain, batch_size=batch_size):
         lab_batch = rgb2lab(batch)
@@ -108,7 +134,7 @@ with device:
         image_a_b_gen(batch_size),
         callbacks=[tensorboard, WandbCallback()],
         epochs=250,
-        steps_per_epoch=73,
+        steps_per_epoch=37,
         validation_data=(Xtest, Ytest)
     )
     model.save_weights("model_weights.h5")
@@ -151,4 +177,4 @@ for i in range(len(output)):
     cur = np.zeros((256, 256, 3))
     cur[:,:,0] = color_me[i][:,:,0]
     cur[:,:,1:] = output[i]
-    imsave("/home/alumne/xnap-project-ed_group_05/experiments/wandb/relacio_bona/img_"+str(i)+".png", lab2rgb(cur))
+    imsave("/home/alumne/xnap-project-ed_group_05/experiments/wandb/new/img_"+str(i)+".png", lab2rgb(cur))

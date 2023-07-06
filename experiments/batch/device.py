@@ -12,6 +12,7 @@ import numpy as np
 import os
 import random
 import matplotlib.pyplot as plt
+
 import wandb 
 from wandb.keras import WandbCallback
 import random
@@ -27,12 +28,13 @@ for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/sport/tot
     X.append(img_to_array(img))
 X = np.array(X, dtype=float)
 
+
 # Set up train and test data
 split = int(0.95*len(X))
 Xtrain = X[:split]
 Xtrain = 1.0/255*Xtrain
 Xtrain = tf.convert_to_tensor(Xtrain, dtype=tf.float32)
-
+#l2
 model = Sequential()
 model.add(InputLayer(input_shape=(256, 256, 1)))
 model.add(Conv2D(64, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
@@ -78,6 +80,8 @@ Xtest = tf.convert_to_tensor(Xtest, dtype=tf.float32)
 Ytest = rgb2lab(1.0/255*X[split:])[:,:,:,1:]
 Ytest = Ytest / 128
 Ytest = tf.convert_to_tensor(Ytest, dtype=tf.float32)
+#epochs flores 150 y 250 con steps a 33 flores
+#deportes
 
 # Move model to GPU
 with device:
@@ -99,7 +103,7 @@ plt.title('Loss over epochs')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.legend()
-plt.savefig('/home/alumne/xnap-project-ed_group_05/experiments/batch/loss_plot_batch_flors_steps_corre.png')
+plt.savefig('/home/alumne/xnap-project-ed_group_05/experiments/batch/loss_plot_batch_depo_l2_gan.png')
 plt.show()
 
 # Save model
