@@ -1,17 +1,18 @@
 import tensorflow as tf
-from keras.optimizers import RMSprop
-from keras.layers import Conv2D, UpSampling2D, InputLayer
-from keras.layers import Activation, Dense, Dropout, Flatten
-from keras.layers import BatchNormalization
-from keras.models import Sequential
-from keras.preprocessing.image import ImageDataGenerator
-from keras.utils import array_to_img, img_to_array, load_img
+from tensorflow.keras.optimizers import RMSprop
+from tensorflow.keras.layers import Conv2D, UpSampling2D, InputLayer, Activation, Dense, Dropout, Flatten, BatchNormalization
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.utils import array_to_img, img_to_array, load_img
+from tensorflow.keras.metrics import Mean
 from skimage.color import rgb2lab, lab2rgb
-from skimage.io import imsave
+from skimage.metrics import structural_similarity as compare_ssim
 import numpy as np
 import os
-import random
 import matplotlib.pyplot as plt
+
+import wandb 
+from wandb.keras import WandbCallback
 
 import wandb 
 from wandb.keras import WandbCallback
@@ -22,7 +23,7 @@ import random
 device = tf.device("GPU")
 
 # Get images
-data_dir = '/home/alumne/xnap-project-ed_group_05/beta/sport/total/train'
+data_dir = '/home/alumne/xnap-project-ed_group_05/beta/flors/flors_train'
 image_size = (256, 256)
 Xtrain_datagen = ImageDataGenerator(
         rescale=1.0/255,
@@ -38,7 +39,7 @@ Xtrain_generator = Xtrain_datagen.flow_from_directory(
 
 Xtrain = next(Xtrain_generator)
 Xtrain = tf.keras.utils.array_utils.to_array(Xtrain, dtype=tf.float32)
-Xtrain = Xtrain[..., :1]  # Get only the L channel
+Xtrain = Xtrain[..., :1]  # Obtenim només el canal L
 
 
 # Set up model
@@ -60,8 +61,16 @@ model.add(Conv2D(32, (3, 3), activation='relu', padding='same', kernel_regulariz
 model.add(Conv2D(2, (3, 3), activation='tanh', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
 model.add(UpSampling2D((2, 2)))
 
+
+
+# Define SSIM loss function
+def ssim_loss(y_true, y_pred):
+    return 1 - tf.reduce_mean(compare_ssim(y_true, y_pred, multichannel=True))
+
+
 optimizer = RMSprop(learning_rate=0.001)
-model.compile(optimizer=optimizer, loss=tf.keras.losses.mean_squared_error)
+model.compile(optimizer=optimizer, loss=ssim_loss)
+
 
 # Image transformer
 datagen = ImageDataGenerator(
@@ -121,8 +130,8 @@ model.save_weights("model.h5")
 
 # Colorization
 color_me = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/sport/total/test'):
-    color_me.append(img_to_array(load_img('/home/alumne/xnap-project-ed_group_05/beta/sport/total/test/'+filename, target_size=(256, 256))))
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_test'):
+    color_me.append(img_to_array(load_img('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_test'+filename, target_size=(256, 256))))
 color_me = np.array(color_me, dtype=float)
 color_me = rgb2lab(1.0/255*color_me)[:,:,:,0]
 color_me = color_me.reshape(color_me.shape+(1,))
@@ -136,4 +145,4 @@ for i in range(len(output)):
     cur = np.zeros((256, 256, 3))
     cur[:,:,0] = color_me[i][:,:,0]
     cur[:,:,1:] = output[i]
-    imsave("/home/alumne/xnap-project-ed_group_05/experiments/batch/l2_mas_steps/img_"+str(i)+".png", lab2rgb(cur))
+    imsave("/home/alumne/xnap-project-ed_group_05/experiments/batch/loss_plot_batch"+str(i)+".png", lab2rgb(cur))
