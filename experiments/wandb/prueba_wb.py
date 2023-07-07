@@ -111,6 +111,8 @@ def image_a_b_gen(batch_size):
     for batch in datagen.flow(Xtrain, batch_size=batch_size):
         lab_batch = rgb2lab(batch)
         X_batch = lab_batch[:,:,:,0]
+        #print(f'min {X_batch.min()} max {X_batch.max()}  {X_batch.shape()}')
+        #print(X_batch)
         Y_batch = lab_batch[:,:,:,1:] / 128
         yield (X_batch.reshape(X_batch.shape+(1,)), Y_batch)
 
@@ -126,15 +128,15 @@ Ytest = tf.convert_to_tensor(Ytest, dtype=tf.float32)
 
 #epochs flores 150 y 250 con steps a 33 flores
 #deportes
-
+samples=166
 # Move model to GPU
 with device:
     tensorboard = tf.keras.callbacks.TensorBoard(log_dir="output/first_run")
     history = model.fit_generator(
         image_a_b_gen(batch_size),
-        callbacks=[tensorboard, WandbCallback()],
+        callbacks=[WandbCallback()],
         epochs=250,
-        steps_per_epoch=37,
+        steps_per_epoch=samples//batch_size,
         validation_data=(Xtest, Ytest)
     )
     model.save_weights("model_weights.h5")
