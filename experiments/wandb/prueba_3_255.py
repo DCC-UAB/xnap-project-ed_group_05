@@ -31,13 +31,13 @@ X = np.array(X, dtype=float)
 
 # start a new wandb run to track this script
 config={
-        "learning_rate": "no",
+        "learning_rate": 0.0001,
         "architecture": "CNN",
         "dataset": "flors",
-        "epochs": 100,
+        "epochs": 250,
         "regularizador": "no",
         "batch_size": 5, 
-        "optimizador": "rmsprop",
+        "optimizador": RMSprop(learning_rate = 0.0001),
         "loss": "mse"
     }
 wandb.init(
@@ -64,7 +64,7 @@ for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/flors/flo
     Xtest.append(img_to_array(img))
 Xtest = np.array(Xtest, dtype=float)
 Xtest_lab = rgb2lab(Xtest)
-Xtest = Xtest / 128.0
+Xtest = Xtest / 255.0  # Normalizar en el rango [0, 1]
 Xtest = tf.convert_to_tensor(Xtest, dtype=tf.float32)
 
 # Convert training images to Lab color space
@@ -134,7 +134,7 @@ plt.title('Loss over epochs')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.legend()
-plt.savefig('/home/alumne/xnap-project-ed_group_05/experiments/wandb/prova_3/loss_wb.png')
+plt.savefig('/home/alumne/xnap-project-ed_group_05/experiments/wandb/prova_3_lr_00001/loss_wb.png')
 plt.show()
 
 # Save model
@@ -156,7 +156,7 @@ for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/flors/flo
     img = img_to_array(load_img('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_test/' + filename, target_size=(256, 256)))
     color_me.append(img)
 
-# Convertir a arrayde tipo float y normalizar
+# Convertir a array de tipo float y normalizar
 color_me = np.array(color_me, dtype=float)
 color_me = color_me / 255.0  # Normalizar en el rango [0, 1]
 
@@ -166,20 +166,21 @@ color_me_lab = rgb2lab(color_me)
 # Extraer el canal L
 color_me_l = color_me_lab[:, :, :, 0]
 color_me_l = color_me_l.reshape(color_me_l.shape + (1,))
+color_me_l = color_me_l / 100.0  # Normalizar en el rango [0, 1] dividiendo por 100.0
 color_me_l = tf.convert_to_tensor(color_me_l, dtype=tf.float32)
 
 # Obtener la salida del modelo
 output = model.predict(color_me_l)
 
 # Deshacer la normalización
-output = output * 128.0
+output = output * 128.0  # Multiplicar por 128.0 en lugar de 100.0
 
 # Generar imágenes de salida en color
 for i in range(len(output)):
     cur = np.zeros((256, 256, 3))
-    cur[:, :, 0] = color_me_l[i][:, :, 0]
+    cur[:, :, 0] = color_me_l[i][:, :, 0] * 100.0  # Multiplicar por 100.0 para deshacer la normalización
     cur[:, :, 1:] = output[i]
     cur = lab2rgb(cur)
-    cur = np.clip(cur, 0, 1)  # Asegurarse de que los valores estén en el rango [0, 1]
-    imsave("/home/alumne/xnap-project-ed_group_05/experiments/wandb/prova_3/img_" + str(i)+".png",cur)
-
+    cur = np.clip(cur, 0, 1)  
+    # # Asegurarse de que los valores estén en el rango [0, 1]
+    imsave("/home/alumne/xnap-project-ed_group_05/experiments/wandb/prova_3_lr_00001/img_" + str(i)+".png", cur)
