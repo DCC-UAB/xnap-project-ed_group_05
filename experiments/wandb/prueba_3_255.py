@@ -1,5 +1,5 @@
 import tensorflow as tf
-from keras.optimizers import RMSprop
+from keras.optimizers import RMSprop, Adam
 from keras.layers import Conv2D, UpSampling2D, InputLayer
 from keras.layers import Activation, Dense, Dropout, Flatten
 from keras.layers import BatchNormalization
@@ -17,7 +17,7 @@ import wandb
 from wandb.keras import WandbCallback
 import random
 
-#### salen las imagenes rojizas enteras y la val loss es ctt
+#### salen las imagenes rojizas enteras y la val loss es ctt, con adam a 0.0001 salen las imagenes en blanco y negro
 
 # Set up GPU device
 device = tf.device("GPU")
@@ -35,7 +35,7 @@ config={
         "architecture": "CNN",
         "dataset": "flors",
         "epochs": 250,
-        "regularizador": "no",
+        "regularizador": "l2",
         "batch_size": 5, 
         "optimizador": RMSprop(learning_rate = 0.0001),
         "loss": "mse"
@@ -82,24 +82,34 @@ Xtest_lab = Xtest_lab.reshape(Xtest_lab.shape + (1,))
 # Convert test labels to Lab color space and normalize
 Ytest_lab = Xtest
 Ytest_lab = Ytest_lab[:, :, :, 1:] 
+# Shuffle the training data
 
+indices = np.arange(len(Xtrain_lab))
+
+np.random.shuffle(indices)
+
+indices_tensor = tf.constant(indices)  # Convertir a tensor
+
+Xtrain_lab_shuffled = tf.gather(Xtrain_lab, indices_tensor)
+
+Ytrain_lab_shuffled = tf.gather(Ytrain_lab, indices_tensor)
 # Create the model
 model = Sequential()
 model.add(InputLayer(input_shape=(256, 256, 1)))
-model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
-model.add(Conv2D(64, (3, 3), activation='relu', padding='same', strides=2))
-model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
-model.add(Conv2D(128, (3, 3), activation='relu', padding='same', strides=2))
-model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
-model.add(Conv2D(256, (3, 3), activation='relu', padding='same', strides=2))
-model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
-model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
-model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same', strides=2, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(128, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(128, (3, 3), activation='relu', padding='same', strides=2, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(256, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(256, (3, 3), activation='relu', padding='same', strides=2, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(512, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(256, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(128, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
 model.add(UpSampling2D((2, 2)))
-model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
 model.add(UpSampling2D((2, 2)))
-model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
-model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
+model.add(Conv2D(32, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(2, (3, 3), activation='tanh', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
 model.add(UpSampling2D((2, 2)))
 
 # Compile the model
@@ -110,7 +120,8 @@ datagen = ImageDataGenerator(
         shear_range=0.2,
         zoom_range=0.2,
         rotation_range=20,
-        horizontal_flip=True)
+        horizontal_flip=True,
+        channel_shift_range=20)
 
 # Generate training data
 def image_a_b_gen (batch_size):
@@ -134,7 +145,7 @@ plt.title('Loss over epochs')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.legend()
-plt.savefig('/home/alumne/xnap-project-ed_group_05/experiments/wandb/prova_3_lr_00001/loss_wb.png')
+plt.savefig('/home/alumne/xnap-project-ed_group_05/experiments/wandb/shuffle+ruido/loss_wb.png')
 plt.show()
 
 # Save model
@@ -142,14 +153,14 @@ model_json = model.to_json()
 with open("model.json", "w") as json_file:
     json_file.write(model_json)
 model.save_weights("model.h5")
-
+'''
 #show model
 tf.keras.utils.plot_model(
     model,
     to_file="model.png",
     show_shapes=True
 )
-
+'''
 # Leer y preprocesar las imágenes de entrada
 color_me = []
 for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_test'):
@@ -183,4 +194,4 @@ for i in range(len(output)):
     cur = lab2rgb(cur)
     cur = np.clip(cur, 0, 1)  
     # # Asegurarse de que los valores estén en el rango [0, 1]
-    imsave("/home/alumne/xnap-project-ed_group_05/experiments/wandb/prova_3_lr_00001/img_" + str(i)+".png", cur)
+    imsave("/home/alumne/xnap-project-ed_group_05/experiments/wandb/shuffle+ruido/img_" + str(i)+".png", cur)
