@@ -52,6 +52,7 @@ Biblioteques de Python:
   - WandB
 ## Referències
 [Coloring black and white images with neural networks](https://github.com/emilwallner/Coloring-greyscale-images)
+[WandB](https://wandb.ai/team_ev/my-awesome-project?workspace=user-videelia)
 ## Contribuïdores
 Àfrica Gamero López (1606033@uab.cat), Èlia Vinyes Devesa (1606019@uab.cat), Marina Sulé Carrasco (1527602@uab.cat)
 
