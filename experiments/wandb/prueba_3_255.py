@@ -36,7 +36,7 @@ config={
         "dataset": "flors",
         "epochs": 250,
         "regularizador": "l2",
-        "batch_size": 5, 
+        "batch_size": 7, 
         "optimizador": RMSprop(learning_rate = 0.0001),
         "loss": "mse"
     }
@@ -193,5 +193,6 @@ for i in range(len(output)):
     cur[:, :, 1:] = output[i]
     cur = lab2rgb(cur)
     cur = np.clip(cur, 0, 1)  
+    cur = np.uint8(cur * 255.0) 
     # # Asegurarse de que los valores estén en el rango [0, 1]
     imsave("/home/alumne/xnap-project-ed_group_05/experiments/wandb/shuffle+ruido/img_" + str(i)+".png", cur)
