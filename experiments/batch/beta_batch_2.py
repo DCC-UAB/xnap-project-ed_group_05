@@ -29,10 +29,10 @@ config={
         "learning_rate": 0.0001,
         "architecture": "CNN",
         "dataset": "flors",
-        "epochs": 350,
+        "epochs": 100,
         "regularizador": "no",
-        "batch_size": 10, 
-        "optimizador": RMSprop(learning_rate=0.001),
+        "batch_size": 2, 
+        "optimizador": RMSprop(learning_rate=0.0001),
         "loss": "mse"
     }
 wandb.init(
@@ -48,6 +48,7 @@ Xtrain = X[:split]
 Xtrain = 1.0/255*Xtrain
 Xtrain = tf.convert_to_tensor(Xtrain, dtype=tf.float32)
 
+
 model = Sequential()
 model.add(InputLayer(input_shape=(256, 256, 1)))
 model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
@@ -61,12 +62,14 @@ model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
 model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
-model.add(UpSampling2D((2, 2)))
+model.add(UpSampling2D((2, 2))) 
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
-model.add(UpSampling2D((2, 2)))
+model.add(UpSampling2D((2, 2))) 
 
-optimizer = RMSprop(learning_rate=0.001)
+
+
+optimizer = RMSprop(learning_rate=0.0001)
 model.compile(optimizer=optimizer, loss='mse')
 
 # Image transformer
@@ -74,7 +77,7 @@ datagen = ImageDataGenerator(
         shear_range=0.2,
         zoom_range=0.2,
         rotation_range=20,
-        horizontal_flip=True)
+        horizontal_flip=True, channel_shift_range=10)
 
 # Generate training data
 batch_size = 10
@@ -99,8 +102,8 @@ with device:
     history = model.fit_generator(
         image_a_b_gen(batch_size),
         callbacks=[WandbCallback()],
-        epochs=350,
-        steps_per_epoch=17,
+        epochs=100,
+        steps_per_epoch=len(Xtrain)//batch_size,
         validation_data=(Xtest, Ytest)
     )
     model.save_weights("model_weights.h5")
@@ -113,7 +116,7 @@ plt.title('Loss over epochs')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.legend()
-plt.savefig('/home/alumne/xnap-project-ed_group_05/experiments/batch/loss_plot_batch_flors.png')
+plt.savefig('/home/alumne/xnap-project-ed_group_05/experiments/batch/batch_2/loss_plot_batch_flors.png')
 plt.show()
 
 # Save model
@@ -139,4 +142,4 @@ for i in range(len(output)):
     cur = np.zeros((256, 256, 3))
     cur[:,:,0] = color_me[i][:,:,0]
     cur[:,:,1:] = output[i]
-    imsave("/home/alumne/xnap-project-ed_group_05/experiments/batch/img_"+str(i)+".png", lab2rgb(cur))
+    imsave("/home/alumne/xnap-project-ed_group_05/experiments/batch/batch_2/img_"+str(i)+".png", lab2rgb(cur))
