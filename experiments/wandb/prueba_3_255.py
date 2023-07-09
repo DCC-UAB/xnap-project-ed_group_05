@@ -24,8 +24,8 @@ device = tf.device("GPU")
 
 # Get images
 X = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_train'):
-    img = load_img('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_train/'+filename, target_size=(256, 256))
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-3/beta/flors/flors_train'):
+    img = load_img('/home/alumne/xnap-project-ed_group_05-3/beta/flors/flors_train/'+filename, target_size=(256, 256))
     X.append(img_to_array(img))
 X = np.array(X, dtype=float)
 
@@ -34,16 +34,16 @@ config={
         "learning_rate": 0.0001,
         "architecture": "CNN",
         "dataset": "flors",
-        "epochs": 250,
-        "regularizador": "l2",
-        "batch_size": 7, 
+        "epochs": 100,
+        "regularizador": "L2",
+        "batch_size": 10, 
         "optimizador": RMSprop(learning_rate = 0.0001),
         "loss": "mse"
     }
 wandb.init(
     # set the wandb project where this run will be logged
     project="my-awesome-project",
-    dir="/home/alumne/xnap-project-ed_group_05/experiments/wandb",
+    dir="/home/alumne/xnap-project-ed_group_05-3/experiments/wandb",
     # track hyperparameters and run metadata
     config=config
 )
@@ -59,8 +59,8 @@ Xtrain = Xtrain / 255.0
 
 # Load and normalize test data
 Xtest = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_test'):
-    img = load_img('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_test/'+filename, target_size=(256, 256))
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-3/beta/flors/flors_train'):
+    img = load_img('/home/alumne/xnap-project-ed_group_05-3/beta/flors/flors_train/'+filename, target_size=(256, 256))
     Xtest.append(img_to_array(img))
 Xtest = np.array(Xtest, dtype=float)
 Xtest_lab = rgb2lab(Xtest)
@@ -70,6 +70,9 @@ Xtest = tf.convert_to_tensor(Xtest, dtype=tf.float32)
 # Convert training images to Lab color space
 Xtrain_lab = Xtrain_lab[:, :, :, 0]  # Extract L channel
 Xtrain_lab = Xtrain_lab.reshape(Xtrain_lab.shape + (1,))
+#PRUEVA NORMALIZACIÓN RANGO [0,1] (PROBLEM1)
+#Xtrain_lab = Xtrain_lab / 100.0  # Normalizar en el rango [0, 1] dividiendo por 100.0
+Xtrain_lab = Xtrain_lab / 128.0 # Normalizar en el rango [0, 1] dividiendo por 128.0
 
 # Convert training labels to Lab color space and normalize
 Ytrain_lab = Xtrain
@@ -78,6 +81,9 @@ Ytrain_lab = Ytrain_lab[:, :, :, 1:]  # no 128
 # Convert test images to Lab color space
 Xtest_lab = Xtest_lab[:, :, :, 0]  # Extract L channel
 Xtest_lab = Xtest_lab.reshape(Xtest_lab.shape + (1,))
+#PRUEVA NORMALIZACIÓN RANGO [0,1] (PROBLEM1)
+#Xtest_lab = Xtest_lab / 100.0  # Normalizar en el rango [0, 1] dividiendo por 100.0
+Xtest_lab = Xtest_lab / 128.0 # Normalizar en el rango [0, 1] dividiendo por 128.0
 
 # Convert test labels to Lab color space and normalize
 Ytest_lab = Xtest
@@ -93,7 +99,11 @@ indices_tensor = tf.constant(indices)  # Convertir a tensor
 Xtrain_lab_shuffled = tf.gather(Xtrain_lab, indices_tensor)
 
 Ytrain_lab_shuffled = tf.gather(Ytrain_lab, indices_tensor)
+
+
 # Create the model
+
+
 model = Sequential()
 model.add(InputLayer(input_shape=(256, 256, 1)))
 model.add(Conv2D(64, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
@@ -111,6 +121,26 @@ model.add(UpSampling2D((2, 2)))
 model.add(Conv2D(32, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
 model.add(Conv2D(2, (3, 3), activation='tanh', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
 model.add(UpSampling2D((2, 2)))
+
+'''
+model = Sequential()
+model.add(InputLayer(input_shape=(256, 256, 1)))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same', strides=2))
+model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(128, (3, 3), activation='relu', padding='same', strides=2))
+model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(256, (3, 3), activation='relu', padding='same', strides=2))
+model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
+model.add(UpSampling2D((2, 2)))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+model.add(UpSampling2D((2, 2)))
+model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
+model.add(UpSampling2D((2, 2)))
+'''
 
 # Compile the model
 model.compile(optimizer=config["optimizador"], loss=config["loss"])
@@ -145,7 +175,7 @@ plt.title('Loss over epochs')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.legend()
-plt.savefig('/home/alumne/xnap-project-ed_group_05/experiments/wandb/shuffle+ruido/loss_wb.png')
+plt.savefig('/home/alumne/xnap-project-ed_group_05-3/experiments/wandb/shuffle+ noise + floretes/loss_wb.png')
 plt.show()
 
 # Save model
@@ -163,8 +193,8 @@ tf.keras.utils.plot_model(
 '''
 # Leer y preprocesar las imágenes de entrada
 color_me = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_test'):
-    img = img_to_array(load_img('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_test/' + filename, target_size=(256, 256)))
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-3/beta/flors/flors_test'):
+    img = img_to_array(load_img('/home/alumne/xnap-project-ed_group_05-3/beta/flors/flors_test/' + filename, target_size=(256, 256)))
     color_me.append(img)
 
 # Convertir a array de tipo float y normalizar
@@ -195,4 +225,4 @@ for i in range(len(output)):
     cur = np.clip(cur, 0, 1)  
     cur = np.uint8(cur * 255.0) 
     # # Asegurarse de que los valores estén en el rango [0, 1]
-    imsave("/home/alumne/xnap-project-ed_group_05/experiments/wandb/shuffle+ruido/img_" + str(i)+".png", cur)
+    imsave("/home/alumne/xnap-project-ed_group_05-3/experiments/wandb/shuffle+ noise + floretes/img_" + str(i)+".png", cur)
