@@ -1,5 +1,5 @@
 import tensorflow as tf
-from keras.optimizers import RMSprop, Adam
+from keras.optimizers import RMSprop, Adam, Adagrad
 from keras.layers import Conv2D, UpSampling2D, InputLayer
 from keras.layers import Activation, Dense, Dropout, Flatten
 from keras.layers import BatchNormalization
@@ -24,8 +24,8 @@ device = tf.device("GPU")
 
 # Get images
 X = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-3/beta/flors/flors_train'):
-    img = load_img('/home/alumne/xnap-project-ed_group_05-3/beta/flors/flors_train/'+filename, target_size=(256, 256))
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_train'):
+    img = load_img('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_train/'+filename, target_size=(256, 256))
     X.append(img_to_array(img))
 X = np.array(X, dtype=float)
 
@@ -36,14 +36,14 @@ config={
         "dataset": "flors",
         "epochs": 100,
         "regularizador": "L2",
-        "batch_size": 10, 
-        "optimizador": RMSprop(learning_rate = 0.0001),
+        "batch_size": 15, 
+        "optimizador": Adagrad(learning_rate = 0.001),
         "loss": "mse"
     }
 wandb.init(
     # set the wandb project where this run will be logged
     project="my-awesome-project",
-    dir="/home/alumne/xnap-project-ed_group_05-3/experiments/wandb",
+    dir="/home/alumne/xnap-project-ed_group_05/experiments/wandb",
     # track hyperparameters and run metadata
     config=config
 )
@@ -59,8 +59,8 @@ Xtrain = Xtrain / 255.0
 
 # Load and normalize test data
 Xtest = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-3/beta/flors/flors_train'):
-    img = load_img('/home/alumne/xnap-project-ed_group_05-3/beta/flors/flors_train/'+filename, target_size=(256, 256))
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_train'):
+    img = load_img('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_train/'+filename, target_size=(256, 256))
     Xtest.append(img_to_array(img))
 Xtest = np.array(Xtest, dtype=float)
 Xtest_lab = rgb2lab(Xtest)
@@ -106,21 +106,26 @@ Ytrain_lab_shuffled = tf.gather(Ytrain_lab, indices_tensor)
 
 model = Sequential()
 model.add(InputLayer(input_shape=(256, 256, 1)))
-model.add(Conv2D(64, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-model.add(Conv2D(64, (3, 3), activation='relu', padding='same', strides=2, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-model.add(Conv2D(128, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-model.add(Conv2D(128, (3, 3), activation='relu', padding='same', strides=2, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-model.add(Conv2D(256, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-model.add(Conv2D(256, (3, 3), activation='relu', padding='same', strides=2, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-model.add(Conv2D(512, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-model.add(Conv2D(256, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-model.add(Conv2D(128, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same', strides=2))
+model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(128, (3, 3), activation='relu', padding='same', strides=2))
+model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(256, (3, 3), activation='relu', padding='same', strides=2))
+model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
 model.add(UpSampling2D((2, 2)))
-model.add(Conv2D(64, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
 model.add(UpSampling2D((2, 2)))
-model.add(Conv2D(32, (3, 3), activation='relu', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-model.add(Conv2D(2, (3, 3), activation='tanh', padding='same', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
 model.add(UpSampling2D((2, 2)))
+optimizerAda = Adagrad(lr=0.001)
+model.compile(optimizer=optimizerAda, loss='mse')
 
 '''
 model = Sequential()
@@ -143,16 +148,15 @@ model.add(UpSampling2D((2, 2)))
 '''
 
 # Compile the model
-model.compile(optimizer=config["optimizador"], loss=config["loss"])
+#model.compile(optimizer=config["optimizador"], loss=config["loss"])
 
 # Image transformer
 datagen = ImageDataGenerator(
         shear_range=0.2,
         zoom_range=0.2,
-        rotation_range=20,
-        horizontal_flip=True,
-        channel_shift_range=20)
-
+        rotation_range=20)
+        #channel_shift_range=10
+        #flip
 # Generate training data
 def image_a_b_gen (batch_size):
     for batch in datagen.flow(Xtrain_lab, Ytrain_lab, batch_size=config["batch_size"]):
@@ -164,7 +168,7 @@ with device:
         image_a_b_gen(config["batch_size"]),
         callbacks=[WandbCallback()],
         epochs=config["epochs"],
-        steps_per_epoch=len(Xtrain) // config["batch_size"],
+        steps_per_epoch=50,
         validation_data=(Xtest_lab, Ytest_lab)
     )
 
@@ -175,7 +179,7 @@ plt.title('Loss over epochs')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.legend()
-plt.savefig('/home/alumne/xnap-project-ed_group_05-3/experiments/wandb/shuffle+ noise + floretes/loss_wb.png')
+plt.savefig('/home/alumne/xnap-project-ed_group_05/experiments/wandb/shuffle+ noise + floretes/loss_wb.png')
 plt.show()
 
 # Save model
@@ -193,8 +197,8 @@ tf.keras.utils.plot_model(
 '''
 # Leer y preprocesar las imágenes de entrada
 color_me = []
-for filename in os.listdir('/home/alumne/xnap-project-ed_group_05-3/beta/flors/flors_test'):
-    img = img_to_array(load_img('/home/alumne/xnap-project-ed_group_05-3/beta/flors/flors_test/' + filename, target_size=(256, 256)))
+for filename in os.listdir('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_test'):
+    img = img_to_array(load_img('/home/alumne/xnap-project-ed_group_05/beta/flors/flors_test/' + filename, target_size=(256, 256)))
     color_me.append(img)
 
 # Convertir a array de tipo float y normalizar
@@ -207,7 +211,7 @@ color_me_lab = rgb2lab(color_me)
 # Extraer el canal L
 color_me_l = color_me_lab[:, :, :, 0]
 color_me_l = color_me_l.reshape(color_me_l.shape + (1,))
-color_me_l = color_me_l / 100.0  # Normalizar en el rango [0, 1] dividiendo por 100.0
+color_me_l = color_me_l   # Normalizar en el rango [0, 1] dividiendo por 100.0
 color_me_l = tf.convert_to_tensor(color_me_l, dtype=tf.float32)
 
 # Obtener la salida del modelo
@@ -219,10 +223,10 @@ output = output * 128.0  # Multiplicar por 128.0 en lugar de 100.0
 # Generar imágenes de salida en color
 for i in range(len(output)):
     cur = np.zeros((256, 256, 3))
-    cur[:, :, 0] = color_me_l[i][:, :, 0] * 100.0  # Multiplicar por 100.0 para deshacer la normalización
+    cur[:, :, 0] = color_me_l[i][:, :, 0]  # Multiplicar por 100.0 para deshacer la normalización
     cur[:, :, 1:] = output[i]
     cur = lab2rgb(cur)
-    cur = np.clip(cur, 0, 1)  
-    cur = np.uint8(cur * 255.0) 
+    #cur = np.clip(cur, 0, 1)  
+    #cur = np.uint8(cur * 255.0) 
     # # Asegurarse de que los valores estén en el rango [0, 1]
-    imsave("/home/alumne/xnap-project-ed_group_05-3/experiments/wandb/shuffle+ noise + floretes/img_" + str(i)+".png", cur)
+    imsave("/home/alumne/xnap-project-ed_group_05/experiments/wandb/shuffle+ noise + floretes/img_" + str(i)+".png", cur)

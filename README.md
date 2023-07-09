@@ -2,16 +2,6 @@
 # COLOURING GRAYSCALE PHOTOS
 Aquest repositori conté diversos codis per a coloregar imatges en blanc i negre utilitzant diferents tècniques i models d'aprenentatge automàtic. A continuació, s'explica breument cada un dels codis disponibles:
 
-## Alpha
-Aquest codi implementa un model de xarxa neuronal per a la coloració d'imatges en blanc i negre. Carrega una imatge, la converteix a l'espai de colors Lab i utilitza aquesta imatge per a entrenar el model. El model té diverses capes de convolució i submostreig per a l'extracció de característiques i l'augment de la resolució. Finalment, el model és entrenat utilitzant les dades d'entrada i sortida i es genera una imatge en color a partir de la imatge en blanc i negre.
-Per utilitzar aquest codi, simplement carrega una imatge en blanc i negre, ajusta els paràmetres d'entrenament (com ara el nombre d'èpoques) i executa el codi per a generar la imatge en color. Pots ajustar el model i experimentar amb diferents paràmetres per a obtenir resultats òptims.
-Capa és una versió actualitzada del codi mencionat anteriorment, on s'han realitzat canvis al learning rate i al batch size.
-
-
-Original        vs       Predita
-
-<img width="226" alt="image" src="https://github.com/DCC-UAB/xnap-project-ed_group_05/assets/102381651/90ea9f82-4f5b-420c-a8c3-082b51bcd62a">
-
 ## Beta
 Aquest codi implementa un model de xarxa neuronal per a la coloració d'imatges en blanc i negre. Carrega un conjunt d'imatges en blanc i negre i divideix les dades en conjunts d'entrenament i de prova. El model utilitza diverses capes de convolució i submostreig per a l'extracció de característiques i l'augment de la resolució. S'utilitza l'optimitzador RMSprop i la funció de pèrdua MSE per a l'entrenament del model.
 Una vegada entrenat el model, es fa una avaluació de la pèrdua utilitzant les imatges de prova. A continuació, s'utilitza el model per a predir els colors de les imatges de prova i es generen imatges en color a partir d'aquestes prediccions.
@@ -23,9 +13,18 @@ Original      vs         Predita
 
 <img width="206" alt="image" src="https://github.com/DCC-UAB/xnap-project-ed_group_05/assets/102381651/fdd11002-d278-44e3-b075-1cc26396a27a">
 
+## Starting
+Com a punt de partida del projecte teniem el GitHub que inclou el dataset ‘face_images’ a més d’una carpeta amb dos codis el Versió Alpha i el Versió Beta. En aquest cas no hem volgut aprofitar cap d’aquestes facilitats ja que el dataset té imatges amb les mateixes tonalitats i per tant el model no hauria d’aprendre massa ja que hi ha poca complexitat i, en quan als codis, en la primera entrega ja vam comprovar que no funcionaven corrrectament i per tant no els anàvem a reaprofitar com a tal.
 
-## Gifs
-El codi "gif" és una extensió del codi "alpha" que permet colorejar gifs en blanc i negre. Aquest codi utilitza la mateixa aproximació basada en l'entrenament d'un model d'aprenentatge automàtic, però en aquest cas es processa cada fotograma del gif per separat i després es recomponen per a generar el gif final en color.
+## 255
+En aquest cas el plantejament és diferent i el que volem és fer una normalització concreta per les dades d’entrada (Xtrain) i les dades de sortida (Ytest).
+Primerament, igual que en el cas anterior, és important fer primer la transformació RgbtoLab i després ja podem començar a aplicar la normalització.
+En aquest cas les dades d’entrada es pot normalitzar simplement dividint per 255.0. Així aconseguim escalar els valors dels píxels en el rang [0, 1], ja que originalment es troben en el rang [0, 255].
+Per altre banda, les dades de sortida es fa una normalització diferent, els valors d’aquesta capa es divideix per 128.0 i això ens permet ajustar els valors en un rang [-1, 1]. El motiu és que en l’espai de color LAB aquests valors es centren al voltant de zero amb un rang típic de [-128, 128]. Dividint per 128.0 ens proporciona una manera convenient d’escalar valors de rang [-1, 1] que pot facilitar l’entrenament i la convergència del model.
+
+## Desviació típica
+Aquest codi la diferència principal que té és que calcula la mean (mitjana) i la sd (desviació típica) de les dades per tal d’obtenir els valors de les imatges entre [-1, 1], però com treballem amb la desviació típica poden ballar una mica més i podrien arribar a valors dins l’interval [-3, 3].
+D’aquesta manera es fa la normalització, però en aquest cas és molt important mantenir un ordre coherent i per això necessitem fer primerament la conversió RgbtoLab i després ja la normalització explicada.
 
 
 ## Com utilitzar els codis
@@ -50,6 +49,7 @@ Biblioteques de Python:
   - Os
   - PIL
   - Imageio
+  - WandB
 ## Referències
 [Coloring black and white images with neural networks](https://github.com/emilwallner/Coloring-greyscale-images)
 ## Contribuïdores
